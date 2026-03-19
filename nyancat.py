@@ -24,8 +24,19 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # 👇 NEW: keyboard input
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        x -= hitrost
+    if keys[pygame.K_RIGHT]:
+        x += hitrost
+    if keys[pygame.K_UP]:
+        y -= hitrost
+    if keys[pygame.K_DOWN]:
+        y += hitrost
+
     canvas.fill(color)
-    
     canvas.blit(nyancat, (x, y))
 
     pygame.display.update()
