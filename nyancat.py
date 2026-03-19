@@ -2,7 +2,8 @@ import pygame
 
 pygame.init()
 
-canvas = pygame.display.set_mode((500, 500))
+WIDTH, HEIGHT = 500, 500
+canvas = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("moje prvo okno")
 
 color = (100,120,150)
@@ -11,9 +12,14 @@ nyancat = pygame.image.load("nyancat.png")
 nyancat = pygame.transform.scale(nyancat, (80, 80))
 
 clock = pygame.time.Clock()
-x = 100
-y = 100
-hitrost = 5
+
+
+cat_x = WIDTH // 2 - 40
+cat_y = HEIGHT // 2 - 40
+
+
+world_x = 0
+speed = 5
 
 running = True
 
@@ -24,20 +30,17 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # 👇 NEW: keyboard input
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_LEFT]:
-        x -= hitrost
-    if keys[pygame.K_RIGHT]:
-        x += hitrost
-    if keys[pygame.K_UP]:
-        y -= hitrost
-    if keys[pygame.K_DOWN]:
-        y += hitrost
+    
+    world_x -= speed
 
     canvas.fill(color)
-    canvas.blit(nyancat, (x, y))
+
+   
+    for i in range(0, 1000, 100):
+        pygame.draw.rect(canvas, (255, 255, 255), (i + world_x, 300, 50, 20))
+
+   
+    canvas.blit(nyancat, (cat_x, cat_y))
 
     pygame.display.update()
 
