@@ -5,6 +5,7 @@ pygame.init()
 
 WIDTH, HEIGHT = 500, 500
 canvas = pygame.display.set_mode((WIDTH, HEIGHT))
+<<<<<<< HEAD
 pygame.display.set_caption("Nyan Cat Game")
 
 clock = pygame.time.Clock()
@@ -12,6 +13,8 @@ clock = pygame.time.Clock()
 
 bg_color = (100, 120, 150)
 ground_color = (80, 80, 80)
+=======
+>>>>>>> d8a5a44167dcf42a4598f7809b16e32e197dc5d9
 pygame.display.set_caption("moje prvo okno")
 
 color = (100,120,150)
@@ -30,6 +33,7 @@ jump_strength = -12
 world_speed = 5
 clock = pygame.time.Clock()
 
+<<<<<<< HEAD
 rainbow = []
 obstacles = []
 cat_x = WIDTH // 2 - 40
@@ -41,6 +45,12 @@ def spawn_obstacle():
     w = 40
     h = 60
     return pygame.Rect(x, y, w, h)
+=======
+
+cat_x = WIDTH // 2 - 40
+cat_y = HEIGHT // 2 - 40
+
+>>>>>>> d8a5a44167dcf42a4598f7809b16e32e197dc5d9
 
 world_x = 0
 speed = 5
@@ -54,6 +64,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+<<<<<<< HEAD
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not game_over:
                 velocity = jump_strength
@@ -131,6 +142,19 @@ while running:
         font = pygame.font.SysFont(None, 40)
         text = font.render("Game Over! Press R", True, (255, 255, 255))
         canvas.blit(text, (100, 200))
+=======
+    
+    world_x -= speed
+
+    canvas.fill(color)
+
+   
+    for i in range(0, 1000, 100):
+        pygame.draw.rect(canvas, (255, 255, 255), (i + world_x, 300, 50, 20))
+
+   
+    canvas.blit(nyancat, (cat_x, cat_y))
+>>>>>>> d8a5a44167dcf42a4598f7809b16e32e197dc5d9
 
     pygame.display.update()
 
