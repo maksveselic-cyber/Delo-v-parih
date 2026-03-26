@@ -32,7 +32,7 @@ jump_strength = -12
 world_speed = 5
 clock = pygame.time.Clock()
 
-<<<<<<< HEAD
+
 rainbow = []
 obstacles = []
 cat_x = WIDTH // 2 - 40
@@ -105,8 +105,6 @@ while running:
     world_x -= speed
 
     canvas.fill(bg_color)
-
-  
     pygame.draw.rect(canvas, ground_color, (0, HEIGHT - 50, WIDTH, 50))
     
 
@@ -145,7 +143,7 @@ while running:
     
     world_x -= speed
 
-    canvas.fill(color)
+  
 
    
     for i in range(0, 1000, 100):
