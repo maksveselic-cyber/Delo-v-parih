@@ -38,11 +38,14 @@ obstacles = []
 cat_x = WIDTH // 2 - 40
 cat_y = HEIGHT // 2 - 40
 
+obs_timer = 0 
+delay = 90
+
 def spawn_obstacle():
-    x = WIDTH + 100
-    y = HEIGHT - 100
+    x = WIDTH + 50
+    y = HEIGHT - random.randint(100, 600)
     w = 40
-    h = 60
+    h = random.randint(40, 80)
     return pygame.Rect(x, y, w, h)
 
 
@@ -108,7 +111,10 @@ while running:
     pygame.draw.rect(canvas, ground_color, (0, HEIGHT - 50, WIDTH, 50))
 
 
-
+    obs_timer += 1
+    if obs_timer >= delay:
+        obstacles.append(spawn_obstacle())
+        obs_timer = 0
     for obs in obstacles:
         pygame.draw.rect(canvas, (200, 50, 50), obs)
     barve = [
