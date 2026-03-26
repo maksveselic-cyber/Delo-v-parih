@@ -69,31 +69,31 @@ while running:
                 velocity = jump_strength
 
             if event.key == pygame.K_r and game_over:
-               
+
                 cat_y = HEIGHT // 2
                 velocity = 0
                 obstacles.clear()
                 game_over = False
 
     if not game_over:
-       
+
         velocity += gravity
         cat_y += velocity
 
-     
+
         if cat_y > HEIGHT - 100:
             cat_y = HEIGHT - 100
             velocity = 0
 
-     
+
         if random.randint(1, 60) == 1:
             obstacles.append(spawn_obstacle())
 
-      
+
         for obs in obstacles:
             obs.x -= world_speed
 
-      
+
         obstacles = [obs for obs in obstacles if obs.x > -50]
 
 
@@ -106,7 +106,7 @@ while running:
 
     canvas.fill(bg_color)
     pygame.draw.rect(canvas, ground_color, (0, HEIGHT - 50, WIDTH, 50))
-    
+
 
 
     for obs in obstacles:
@@ -130,26 +130,26 @@ while running:
     for i in range(0, 1000, 100):
         pygame.draw.rect(canvas, (255, 255, 255), (i + world_x, 300, 50, 20))
 
-    
-   
+
+
     canvas.blit(nyancat, (cat_x, cat_y))
 
-    
+
     if game_over:
         font = pygame.font.SysFont(None, 40)
         text = font.render("Game Over! Press R", True, (255, 255, 255))
         canvas.blit(text, (100, 200))
 
-    
+
     world_x -= speed
 
-  
 
-   
+
+
     for i in range(0, 1000, 100):
         pygame.draw.rect(canvas, (255, 255, 255), (i + world_x, 300, 50, 20))
 
-   
+
     canvas.blit(nyancat, (cat_x, cat_y))
 
 
