@@ -18,8 +18,9 @@ pygame.display.set_caption("moje prvo okno")
 
 color = (100,120,150)
 
-nyancat = pygame.image.load("nyancat.png")
-nyancat = pygame.transform.scale(nyancat, (80, 80))
+nyancat = pygame.image.load("nyancat.png").convert()
+nyancat.set_colorkey((255, 255, 255))
+nyancat = pygame.transform.scale(nyancat, (60, 60))
 
 cat_x = WIDTH // 2 - 40
 cat_y = HEIGHT // 2
@@ -38,11 +39,14 @@ obstacles = []
 cat_x = WIDTH // 2 - 40
 cat_y = HEIGHT // 2 - 40
 
+obs_timer = 0 
+delay = 90
+
 def spawn_obstacle():
-    x = WIDTH + 100
-    y = HEIGHT - 100
+    x = WIDTH + 50
+    y = HEIGHT - random.randint(100, 600)
     w = 40
-    h = 60
+    h = random.randint(40, 80)
     return pygame.Rect(x, y, w, h)
 
 
@@ -102,13 +106,14 @@ while running:
             if cat_rect.colliderect(obs):
                 game_over = True
 
-    world_x -= speed
-
     canvas.fill(bg_color)
     pygame.draw.rect(canvas, ground_color, (0, HEIGHT - 50, WIDTH, 50))
 
 
-
+    obs_timer += 1
+    if obs_timer >= delay:
+        obstacles.append(spawn_obstacle())
+        obs_timer = 0
     for obs in obstacles:
         pygame.draw.rect(canvas, (200, 50, 50), obs)
     barve = [
@@ -117,22 +122,31 @@ while running:
         (0,255,0),
         (0,0,255),
         ]
-    for i in rainbow:
-        for j in range(4):
-            pygame.draw.rect(canvas, barve[j], (i[0], i[1] + j*8, 50,8))
+  
+    if rainbow:
+        prejsnji = rainbow[-1]
+        cx = cat_x - prejsnji[0]
+        cy = cat_y - prejsnji[1]
 
-    rainbow.append([cat_x, cat_y])
+        step = 4
+        for i in range(step):
+            x = prejsnji[0] + cx * i / step
+            y = prejsnji[1] + cy * i / step
+            rainbow.append([x, y])
+    else:
+        rainbow.append([cat_x, cat_y])
+
     for i in rainbow:
         i[0] -= world_speed
-        i[1] += 0.5
-    rainbow = [i for i in rainbow if i[0] > -100]   
+
+    rainbow = [i for i in rainbow if i[0] > -50] 
+
+    for i in rainbow:
+        for j in range(4):
+            pygame.draw.circle(canvas, barve[j], (int(i[0]), int(i[1] + j*5)), 4)
 
     for i in range(0, 1000, 100):
         pygame.draw.rect(canvas, (255, 255, 255), (i + world_x, 300, 50, 20))
-
-
-
-    canvas.blit(nyancat, (cat_x, cat_y))
 
 
     if game_over:
