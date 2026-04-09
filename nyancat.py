@@ -5,7 +5,7 @@ pygame.init()
 
 WIDTH, HEIGHT = 500, 500
 canvas = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Nyan Cat Game")
+pygame.display.set_caption("Nyan Cat Platform Game")
 
 clock = pygame.time.Clock()
 
@@ -16,37 +16,36 @@ nyancat = pygame.image.load("nyancat.png").convert()
 nyancat.set_colorkey((255, 255, 255))
 nyancat = pygame.transform.scale(nyancat, (60, 60))
 
+font = pygame.font.SysFont("arial", 30)
+
 velocity = 0
 gravity = 0.8
 jump_strength = -12
 
-
 world_speed = 5
-speed = 5
-
 
 score = 0
 high_score = 0
 rainbow = []
-obstacles = []
+platforms = []
+zvezdice = []
 
-obs_timer = 0 
-delay = 90
-
-def spawn_obstacle():
+def spawn_platform():
     x = WIDTH + 50
-    y = HEIGHT - random.randint(100, 600)
-    w = 40
-    h = random.randint(40, 80)
-    return {"rect": pygame.Rect(x, y, w, h), "passed": False}
+    y = random.randint(200, HEIGHT - 120)
+    w = random.randint(80, 140)
+    h = 15
+    return pygame.Rect(x, y, w, h)
 
-cat_x = WIDTH // 2 - 40
-cat_y = HEIGHT // 2 - 40
+def spawn_zvezdica():
+    x = WIDTH + 50
+    y = random.randint(100, HEIGHT - 200)
+    return pygame.Rect(x, y, 30, 30)
 
-world_x = 0
+cat_x = WIDTH // 2 - 30
+cat_y = HEIGHT // 2
 
 running = True
-
 game_over = False
 
 while running:
@@ -66,8 +65,9 @@ while running:
             if event.key == pygame.K_r and game_over:
                 cat_y = HEIGHT // 2
                 velocity = 0
-                obstacles.clear()
+                platforms.clear()
                 rainbow.clear()
+                zvezdice.clear()
                 score = 0
                 game_over = False
 
@@ -75,42 +75,53 @@ while running:
         velocity += gravity
         cat_y += velocity
 
-        if cat_y > HEIGHT - 100:
-            cat_y = HEIGHT - 100
-            velocity = 0
+        if random.randint(1, 50) == 1:
+            platforms.append(spawn_platform())
 
-        if random.randint(1, 60) == 1:
-            obstacles.append(spawn_obstacle())
+        if random.randint(1, 80) == 1:
+            zvezdice.append(spawn_zvezdica())
 
-        for obs in obstacles:
-            obs["rect"].x -= world_speed
+        current_speed = world_speed + score * 0.05
 
-        obstacles = [obs for obs in obstacles if obs["rect"].x > -50]
+        for p in platforms:
+            p.x -= current_speed
 
-        cat_rect = pygame.Rect(cat_x, cat_y, 80, 80)
+        for z in zvezdice:
+            z.x -= current_speed
 
-        for obs in obstacles:
-            if cat_rect.colliderect(obs["rect"]):
-                game_over = True
-                if score > high_score:
-                    high_score = score
+        platforms = [p for p in platforms if p.x > -100]
+        zvezdice = [z for z in zvezdice if z.x > -50]
 
-            if not obs["passed"] and obs["rect"].x + obs["rect"].width < cat_x:
-                score += 1
-                obs["passed"] = True
-                if score > high_score:
-                    high_score = score
+        cat_rect = pygame.Rect(cat_x, cat_y, 60, 60)
+
+        m = 5
+
+        for p in platforms:
+            if velocity > 0:
+                if cat_rect.bottom + velocity >= p.top and cat_rect.bottom <= p.top + m:
+                    if cat_rect.right > p.left + 5 and cat_rect.left < p.right - 5:
+                        cat_y = p.top - 60
+                        velocity = 0
+                        score += 1
+                        
+        for z in zvezdice:
+            if cat_rect.colliderect(z):
+                score += 5
+                zvezdice.remove(z)
+
+        if cat_y > HEIGHT:
+            game_over = True
+        if score > high_score:
+            high_score = score
 
         if rainbow:
             prejsnji = rainbow[-1]
             cx = cat_x - prejsnji[0]
             cy = cat_y - prejsnji[1]
 
-            step = 4
-
-            for i in range(step):
-                x = prejsnji[0] + cx * i / step
-                y = prejsnji[1] + cy * i / step
+            for i in range(4):
+                x = prejsnji[0] + cx * i / 4
+                y = prejsnji[1] + cy * i / 4
                 rainbow.append([x, y])
         else:
             rainbow.append([cat_x, cat_y])
@@ -118,33 +129,33 @@ while running:
     for i in rainbow:
         i[0] -= world_speed
 
+    if len(rainbow) > 300:
+        rainbow.pop(0)
+
     rainbow = [i for i in rainbow if i[0] > -50]
 
     canvas.fill(bg_color)
 
-    pygame.draw.rect(canvas, ground_color, (0, HEIGHT - 50, WIDTH, 50))
+    for p in platforms:
+        pygame.draw.rect(canvas, (200, 200, 200), p)
 
-    for obs in obstacles:
-        pygame.draw.rect(canvas, (200, 50, 50), obs["rect"])
-
+    for z in zvezdice:
+        pygame.draw.circle(canvas, (255, 255, 0), z.center, 8)
 
     barve = [(255,0,0),(255,255,0),(0,255,0),(0,0,255)]
-
 
     for i in rainbow:
         for j in range(4):
             pygame.draw.circle(canvas, barve[j], (int(i[0]), int(i[1] + j*5)), 4)
 
-    font = pygame.font.SysFont("arial", 30)
-    napis_teksta = font.render(f"Score: {score}", True, (255,255,255))
+    score_text = font.render(f"Score: {score}", True, (255,255,255))
+    canvas.blit(score_text, (10, 10))
 
-    canvas.blit(napis_teksta, (WIDTH - 140, 10))
-    high_score_tekst = font.render(f"High: {high_score}", True, (255,0,0))
-    canvas.blit(high_score_tekst, (WIDTH - 140, 40))
+    high_score_text = font.render(f"High: {high_score}", True, (255,0,0))
+    canvas.blit(high_score_text, (10, 40))
 
     if game_over:
-        font_go = pygame.font.SysFont("arial", 30)
-        text = font_go.render("Game Over! Press R", True, (255, 255, 255))
+        text = font.render("Game Over! Press R", True, (255, 255, 255))
         canvas.blit(text, (100, 200))
 
     canvas.blit(nyancat, (cat_x, cat_y))
